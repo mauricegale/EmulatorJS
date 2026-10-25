@@ -35,7 +35,8 @@ class EJS_GameManager {
             getVideoDimensions: this.Module.cwrap("get_video_dimensions", "number", ["string"]),
             setKeyboardEnabled: this.Module.cwrap("ejs_set_keyboard_enabled", "null", ["number"]),
             setControllerPortDevice: this.Module.cwrap("ejs_set_controller_port_device", "null", ["number", "number"]),
-            getControllerPortInfo: this.Module.cwrap("ejs_get_controller_port_info", "string", [])
+            getControllerPortInfo: this.Module.cwrap("ejs_get_controller_port_info", "string", []),
+            getRomHash: this.Module.cwrap("ejs_get_rom_hash", "number", ["string", "number"])
         }
 
         this.writeFile("/home/web_user/.config/retroarch/retroarch.cfg", this.getRetroArchCfg());
@@ -228,6 +229,13 @@ IF EXIST AUTORUN.BAT CALL AUTORUN.BAT
     }
     getMemoryData(key) {
         return this.Module.EmulatorJSGetMemoryData(key || "RETRO_MEMORY_SYSTEM_RAM");
+    }
+    getRomHash(consoleId) {
+        const pointer = this.functions.getRomHash("/" + this.EJS.fileName, consoleId);
+        if (!pointer) return null;
+        const hash = this.Module.UTF8ToString(pointer);
+        this.Module._free(pointer);
+        return hash;
     }
     loadState(state) {
         try {
