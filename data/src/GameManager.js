@@ -71,7 +71,7 @@ class EJS_GameManager {
         return new Promise(async resolve => {
             this.mkdir("/data");
             this.mkdir("/data/saves");
-            this.FS.mount(this.FS.filesystems.IDBFS, { autoPersist: true }, "/data/saves");
+            this.FS.mount(this.Module.IDBFS, { autoPersist: true }, "/data/saves");
             this.FS.syncfs(true, resolve);
         });
     }
@@ -225,6 +225,9 @@ IF EXIST AUTORUN.BAT CALL AUTORUN.BAT
     }
     getState() {
         return this.Module.EmulatorJSGetState();
+    }
+    getMemoryData(key) {
+        return this.Module.EmulatorJSGetMemoryData(key || "RETRO_MEMORY_SYSTEM_RAM");
     }
     loadState(state) {
         try {
